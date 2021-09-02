@@ -12,5 +12,5 @@ const userSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-
+//                             (name of the model in DB, Schema corresponding to the model)
 module.exports = mongoose.model('User', userSchema);
