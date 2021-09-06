@@ -1,47 +1,50 @@
-const crypto = require('crypto');
+require('dotenv').config();
+const { Router } = require('express');
 const User = require('../models/User');
+const bcrypt = require('bcryptjs'); //bcrypt for password hashing
+const jwt = require('jsonwebtoken'); // jwtoken for sign in
 
-exports.login = async (req, res, next) => {
-	const { email, password } = req.body;
+const router = Router(); // Router for routes bundle
+const { SECRET = 'defaultSecret' } = process.env;
 
-	// Check if email and password is provided
-	if (!email || !password) {
-		return next(new ErrorResponse('Please provide an email and password', 400));
-	}
-
+// Register route to create a new user
+router.post('/register', async (req, res) => {
 	try {
-		// Check that user exists by email
-		const user = await User.findOne({ email }).select('+password');
-
-		if (!user) {
-			return next(new ErrorResponse('Invalid credentials', 401));
-		}
-
-		// Check that password match
-		const isMatch = await user.matchPassword(password);
-
-		if (!isMatch) {
-			return next(new ErrorResponse('Invalid credentials', 401));
-		}
-
-		sendToken(user, 200, res);
-	} catch (err) {
-		next(err);
+		// hash the password
+		req.body.password = await bcrypt.hash(req.body.password);
+		// create a new user
+		const user = await User.create(req.body);
+		// send new user as response
+		res.json(user);
+	} catch (error) {
+		res.status(400).json({ error });
 	}
-};
+});
 
-exports.register = async (req, res, next) => {
-	const { username, email, password } = req.body;
-
+// Login route to verify a user and get a token
+router.post('/login', async (req, res) => {
 	try {
-		const user = await User.create({
-			username,
-			email,
-			password
-		});
-
-		sendToken(user, 200, res);
-	} catch (err) {
-		next(err);
+		if (!email || !password) {
+			return new ErrorResponse('Please provide an email and password', 400);
+		}
+		// check if the user exists
+		const user = await User.findOne({ username: req.body.username });
+		if (user) {
+			//check if password matches
+			const result = await bcrypt.compare(req.body.password, user.password);
+			if (result) {
+				// sign token and send it in response
+				const token = await jwt.sign({ username: user.username }, SECRET);
+				res.json({ token });
+			} else {
+				res.status(400).json({ error: "password doesn't match" });
+			}
+		} else {
+			res.status(400).json({ error: "User doesn't exist" });
+		}
+	} catch (error) {
+		res.status(400).json({ error });
 	}
-};
+});
+
+module.exports = router;
