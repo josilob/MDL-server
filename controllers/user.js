@@ -37,14 +37,19 @@ router.post('/login', async (req, res) => {
 			return res.status(400).send('Please provide username and password.');
 		}
 		// check if the user exists
-		const user = await User.findOne({ username });
-		if (user) {
+		const existingUser = await User.findOne({ username });
+		if (existingUser) {
 			//check if password matches
-			const result = await bcrypt.compare(req.body.password, user.password);
+			const result = await bcrypt.compare(
+				req.body.password,
+				existingUser.password
+			);
 			if (result) {
 				// sign token and send it in response
-				const token = await jwt.sign({ username: user.username }, SECRET);
-				res.json({ token });
+				const token = await jwt.sign({ username: existingUser.username }, SECRET, {
+					expiresIn: '1h'
+				});
+				res.status(200).json({ result: existingUser, token });
 			} else {
 				res.status(400).json({ error: "password doesn't match" });
 			}
