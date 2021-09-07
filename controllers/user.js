@@ -9,33 +9,35 @@ const { SECRET = 'defaultSecret' } = process.env;
 
 // Register route to create a new user
 router.post('/register', async (req, res) => {
+	const { username, email, password, confirmPassword } = req.body;
 	try {
-		const existingUser = await User.findOne({ username: req.body.username });
+		const existingUser = await User.findOne({ username });
 		if (existingUser) {
-			res.json({
-				status: 400,
-				error: `${req.body.username} username already taken.`
-			});
+			return res.status(400).json({ message: 'User already exist.' });
 		}
-		// hash the password
-		req.body.password = await bcrypt.hash(req.body.password, 10);
+		if (password !== confirmPassword)
+			return res.status(400).json({ message: 'Passwords do not match' });
+
+		// HASHED PASSWORD
+		req.body.password = await bcrypt.hash(password, 10);
 		// create a new user
 		const user = await User.create(req.body);
 		// send new user as response
-		res.json({ status: 200, data: user });
+		res.status(200).json({ data: user });
 	} catch (error) {
-		res.json({ status: 500, error: error.message });
+		res.status(500).json({ error: error.message });
 	}
 });
 
 // Login route to verify a user and get a token
 router.post('/login', async (req, res) => {
+	const { username, password } = req.body;
 	try {
-		if (!email || !password) {
-			return new ErrorResponse('Please provide an email and password', 400);
+		if (!username || !password) {
+			return res.status(400).send('Please provide username and password.');
 		}
 		// check if the user exists
-		const user = await User.findOne({ username: req.body.username });
+		const user = await User.findOne({ username });
 		if (user) {
 			//check if password matches
 			const result = await bcrypt.compare(req.body.password, user.password);
@@ -50,7 +52,7 @@ router.post('/login', async (req, res) => {
 			res.status(400).json({ error: "User doesn't exist" });
 		}
 	} catch (error) {
-		res.status(400).json({ error });
+		res.status(400).json({ error: error.message });
 	}
 });
 

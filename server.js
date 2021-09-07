@@ -6,7 +6,7 @@ const mongoose = require('./db/connection');
 
 const app = express();
 
-const usersRouter = require('./controllers/auth');
+const usersRouter = require('./controllers/user');
 const PORT = process.env.PORT || 27017;
 
 // middleware

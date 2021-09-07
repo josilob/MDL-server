@@ -10,5 +10,5 @@ const DrinkSchema = new mongoose.Schema({
 	// ]
 });
 
-//                             (name of the model in DB, Schema corresponding to the model)
+//                             (name of the model in DB & Schema name)
 module.exports = mongoose.model('Drink', DrinkSchema);
