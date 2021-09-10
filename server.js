@@ -5,9 +5,9 @@ const cors = require('cors');
 const mongoose = require('./db/connection');
 
 const app = express();
+const PORT = process.env.PORT || 27017;
 
 const usersRouter = require('./controllers/user');
-const PORT = process.env.PORT || 27017;
 
 // middleware
 app.use(logger('tiny'));
