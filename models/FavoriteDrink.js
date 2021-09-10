@@ -1,14 +1,11 @@
 const { Schema, model } = require('../models/FavoriteDrink');
 
-const DrinkSchema = new mongoose.Schema({
-	name: { type: String, required: true },
-	email: { type: String, required: true, unique: true, trim: true },
-	password: { type: String, required: true, minlength: 6, trim: true },
-	id: { type: String }
-	// favoriteDrinks: [
-	// 	{ type: mongoose.Schema.Types.ObjectId, ref: 'FavoriteDrink' }
-	// ]
+const drinkSchema = new mongoose.Schema({
+	drinkName: { type: String, required: true },
+	drinkImage: { type: String, trim: true },
+	id: { type: String },
+	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 });
 
 //                             (name of the model in DB & Schema name)
-module.exports = mongoose.model('Drink', DrinkSchema);
+module.exports = mongoose.model('Drink', drinkSchema);
