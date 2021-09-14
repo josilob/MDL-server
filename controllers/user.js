@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
 				const token = await jwt.sign({ username: existingUser.username }, SECRET, {
 					expiresIn: '1h'
 				});
-				res.status(200).json({ result: existingUser, token });
+				res.status(200).json({  token });
 			} else {
 				res.status(400).json({ error: "password doesn't match" });
 			}
