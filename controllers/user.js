@@ -15,8 +15,14 @@ router.post('/register', async (req, res) => {
 		if (existingUser) {
 			return res.status(400).json({ message: 'User already exist.' });
 		}
+
 		if (password !== confirmPassword)
 			return res.status(400).json({ message: 'Passwords do not match' });
+
+		if (username.toLowerCase() == password.toLowerCase())
+			return res
+				.status(400)
+				.json({ message: 'Username and password can not be the same!' });
 
 		// HASHED PASSWORD
 		req.body.password = await bcrypt.hash(password, 10);
@@ -49,7 +55,7 @@ router.post('/login', async (req, res) => {
 				const token = await jwt.sign({ username: existingUser.username }, SECRET, {
 					expiresIn: '1h'
 				});
-				res.status(200).json({  token });
+				res.status(200).json({ token });
 			} else {
 				res.status(400).json({ error: "password doesn't match" });
 			}
@@ -84,10 +90,10 @@ router.delete('/delete/all', async (req, res) => {
 });
 
 // delete specific user
-router.delete('/delete/:username', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
 	try {
-		await User.findOneAndDelete(req.params.username);
-		res.json({ status: 200, message: `User ${req.params.username} is removed` });
+		await User.findOneAndDelete({ _id: req.params.id });
+		res.json({ status: 200, message: `User ${req.params.id} is removed` });
 	} catch (error) {
 		res.json({ error: error.message });
 	}
