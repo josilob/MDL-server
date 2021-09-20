@@ -32,8 +32,8 @@ router.post('/register', async (req, res) => {
 		const token = await jwt.sign({ username }, SECRET, {
 			expiresIn: '1h'
 		});
-		// send new user as response
-		res.status(200).json({ token });
+		// send new user's token and username as response
+		res.status(200).json({ token, username });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -59,7 +59,7 @@ router.post('/login', async (req, res) => {
 				const token = await jwt.sign({ username: existingUser.username }, SECRET, {
 					expiresIn: '1h'
 				});
-				res.status(200).json({ token });
+				res.status(200).json({ token, username });
 			} else {
 				res.status(400).json({ error: "password doesn't match" });
 			}
