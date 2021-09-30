@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 27017;
 
 const usersRouter = require('./controllers/user');
+const drinksRouter = require('./controllers/drink');
 
 // middleware
 app.use(logger('tiny'));
@@ -20,5 +21,6 @@ app.get('/', (req, res) => {
 });
 // Use other routes
 app.use('/user', usersRouter);
+app.use('/drinks', drinksRouter);
 
 app.listen(PORT, () => console.log(`Express server listening on port ${PORT}`));
