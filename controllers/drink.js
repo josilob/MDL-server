@@ -1,5 +1,7 @@
 const { Router } = require('express');
-const User = require('../models/User');
+// importing as destructured Object (named export)
+const { User } = require('../models/User');
+// importing as default export
 const FavoriteDrink = require('../models/FavoriteDrink');
 const router = Router();
 
@@ -17,6 +19,7 @@ router.get('/get/:userid', async (req, res) => {
 
 router.post('/add', async (req, res) => {
 	const { drink, id, image, user } = req.body;
+
 	try {
 		// create a new drink
 		const favoriteDrink = await FavoriteDrink.create({
@@ -26,14 +29,22 @@ router.post('/add', async (req, res) => {
 			user
 		});
 
-		FavoriteDrink.findOne({ user })
-			.populate({
-				path: 'user'
-			})
-			.exec(function (err, favoriteDrink) {
-				if (err) return handleError(err);
-				console.log('The drink is %s', favoriteDrink.drinkName);
-			});
+		// FavoriteDrink.findOne({ user })
+		// 	.populate({
+		// 		path: 'user'
+		// 	})
+		// 	.exec(function (err, favoriteDrink) {
+		// 		if (err) return handleError(err);
+		// 		console.log('The drink is %s', favoriteDrink.drinkName);
+		// 	});
+
+		User.findOne({ _id: user }, function (error, user) {
+			if (error) {
+				return handleError(error);
+			}
+			user.favoriteDrinks = favoriteDrink;
+			console.log(user.favoriteDrinks);
+		});
 
 		res.status(200).json({ favoriteDrink });
 	} catch (error) {
