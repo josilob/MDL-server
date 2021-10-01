@@ -1,6 +1,6 @@
 require('dotenv').config();
 const { Router } = require('express');
-const User = require('../models/User');
+const { User } = require('../models/User');
 const bcrypt = require('bcryptjs'); //bcrypt for password hashing
 const jwt = require('jsonwebtoken'); // jwtoken for sign in
 

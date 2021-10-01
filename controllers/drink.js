@@ -1,8 +1,9 @@
 const { Router } = require('express');
-// importing as destructured Object (named export)
+
+// importing as destructured Object (named export) and FavoriteDrink as default export
 const { User } = require('../models/User');
-// importing as default export
 const FavoriteDrink = require('../models/FavoriteDrink');
+
 const router = Router();
 
 //get all drinks of a user
@@ -27,23 +28,6 @@ router.post('/add', async (req, res) => {
 			idDrink: id,
 			drinkImage: image,
 			user
-		});
-
-		// FavoriteDrink.findOne({ user })
-		// 	.populate({
-		// 		path: 'user'
-		// 	})
-		// 	.exec(function (err, favoriteDrink) {
-		// 		if (err) return handleError(err);
-		// 		console.log('The drink is %s', favoriteDrink.drinkName);
-		// 	});
-
-		User.findOne({ _id: user }, function (error, user) {
-			if (error) {
-				return handleError(error);
-			}
-			user.favoriteDrinks = favoriteDrink;
-			console.log(user.favoriteDrinks);
 		});
 
 		res.status(200).json({ favoriteDrink });
