@@ -1,12 +1,13 @@
-const mongoose = require('mongoose');
-// const { Schema, model } = require('../models/FavoriteDrink');
+// import Schema and model as destructured keys from mongoose object
+const { Schema, model } = require('mongoose');
 
-const drinkSchema = new mongoose.Schema({
+const drinkSchema = new Schema({
 	drinkName: { type: String, required: true },
 	drinkImage: { type: String, trim: true },
 	idDrink: { type: String },
-	owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+	user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
-//                             (name of the model in DB & Schema name)
-module.exports = mongoose.model('FavoriteDrink', drinkSchema);
+//                             (model name & Schema name)
+const FavoriteDrink = model('FavoriteDrink', drinkSchema);
+module.exports = FavoriteDrink;

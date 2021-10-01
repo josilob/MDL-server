@@ -13,7 +13,7 @@ router.post('/register', async (req, res) => {
 	try {
 		const existingUser = await User.findOne({ username });
 		if (existingUser) {
-			return res.status(400).json({ message: 'User already exist.' });
+			return res.status(400).json({ message: 'User already exists.' });
 		}
 
 		if (password !== confirmPassword)
@@ -28,12 +28,13 @@ router.post('/register', async (req, res) => {
 		req.body.password = await bcrypt.hash(password, 10);
 		// create a new user
 		const user = await User.create(req.body);
+		const userID = user._id;
 
 		const token = await jwt.sign({ username }, SECRET, {
 			expiresIn: '1h'
 		});
 		// send new user's token and username as response
-		res.status(200).json({ token, username });
+		res.status(200).json({ token, username, userID });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -48,6 +49,8 @@ router.post('/login', async (req, res) => {
 		}
 		// check if the user exists
 		const existingUser = await User.findOne({ username });
+		const userID = existingUser._id; // user's id to store in sessionStorage
+
 		if (existingUser) {
 			//check if password matches
 			const result = await bcrypt.compare(
@@ -59,7 +62,7 @@ router.post('/login', async (req, res) => {
 				const token = await jwt.sign({ username: existingUser.username }, SECRET, {
 					expiresIn: '1h'
 				});
-				res.status(200).json({ token, username });
+				res.status(200).json({ token, username, userID });
 			} else {
 				res.status(400).json({ error: "password doesn't match" });
 			}

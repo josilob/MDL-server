@@ -4,56 +4,53 @@ const FavoriteDrink = require('../models/FavoriteDrink');
 const router = Router();
 
 //get all drinks of a user
-router.get('/:username', async (req, res) => {
+router.get('/get/:userid', async (req, res) => {
 	try {
-		const usersDrinks = await User.find({
-			username: req.params.username
-		}).populate('favoriteDrinks');
-		res.json({
-			// message: `List of ${req.params.username}'s favorite drinks`,
-			usersDrinks
+		const usersDrinks = await FavoriteDrink.find({
+			user: req.params.userid
 		});
+		res.json({ usersDrinks });
 	} catch (error) {
 		res.json({ error: error.message });
 	}
 });
 
 router.post('/add', async (req, res) => {
-	const { drinkName, idDrink, drinkImage, owner } = req.body;
+	const { drink, id, image, user } = req.body;
 	try {
 		// create a new drink
-		const user = await User.findOne({ username: owner });
-		const ownerId = owner._id;
-		const drink = await FavoriteDrink.create({
-			drinkName,
-			idDrink,
-			drinkImage,
-			ownerId
+		const favoriteDrink = await FavoriteDrink.create({
+			drinkName: drink,
+			idDrink: id,
+			drinkImage: image,
+			user
 		});
-		User.find({ username: owner })
-			.populate('favoriteDrinks')
-			.exec(function (error, FavoriteDrink) {
-				if (error) {
-					callback(error, null);
-				} else {
-					callback(null, FavoriteDrink);
-				}
+
+		FavoriteDrink.findOne({ user })
+			.populate({
+				path: 'user'
+			})
+			.exec(function (err, favoriteDrink) {
+				if (err) return handleError(err);
+				console.log('The drink is %s', favoriteDrink.drinkName);
 			});
 
-		res.status(200).json({ drink });
+		res.status(200).json({ favoriteDrink });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
 });
-
-// delete specific user
-// router.delete('/delete/:id', async (req, res) => {
-// 	try {
-// 		await User.findOneAndDelete({ _id: req.params.id });
-// 		res.json({ status: 200, message: `User ${req.params.id} is removed` });
-// 	} catch (error) {
-// 		res.json({ error: error.message });
-// 	}
-// });
+// delete specific drink
+router.delete('/drinks/delete/:id', async (req, res) => {
+	try {
+		await User.findOneAndDelete({ _id: req.params.id });
+		res.json({
+			status: 200,
+			message: `Drink with ID : ${req.params.id} is removed`
+		});
+	} catch (error) {
+		res.json({ error: error.message });
+	}
+});
 
 module.exports = router;
