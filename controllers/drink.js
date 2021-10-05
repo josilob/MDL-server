@@ -31,7 +31,7 @@ router.post('/add', async (req, res) => {
 			user
 		});
 
-		res.status(200).json({ favoriteDrink });
+		res.status(202).json({ favoriteDrink });
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
@@ -40,7 +40,7 @@ router.post('/add', async (req, res) => {
 router.delete('/delete/:id', async (req, res) => {
 	try {
 		await FavoriteDrink.findOneAndDelete({ _id: req.params.id });
-		res.status(200).json({
+		res.status(202).json({
 			message: `Drink successfully removed`
 		});
 	} catch (error) {

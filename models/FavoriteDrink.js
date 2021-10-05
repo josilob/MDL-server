@@ -2,9 +2,9 @@
 const { Schema, model } = require('mongoose');
 
 const drinkSchema = new Schema({
-	drinkName: { type: String, required: true },
+	drinkName: { type: String, required: true, unique: true },
 	drinkImage: { type: String, trim: true },
-	idDrink: { type: String },
+	idDrink: { type: String, unique: true },
 	user: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
