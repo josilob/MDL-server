@@ -5,7 +5,7 @@ const drinkSchema = new Schema({
 	drinkName: { type: String, required: true },
 	drinkImage: { type: String, trim: true },
 	idDrink: { type: String },
-	user: { type: Schema.Types.ObjectId, ref: 'User' }
+	user: { type: Schema.Types.ObjectId, ref: 'User', required: true }
 });
 
 //                             (model name & Schema name)

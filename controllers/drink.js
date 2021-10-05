@@ -12,7 +12,8 @@ router.get('/get/:userid', async (req, res) => {
 		const usersDrinks = await FavoriteDrink.find({
 			user: req.params.userid
 		});
-		res.json({ usersDrinks });
+
+		res.status(200).json(usersDrinks);
 	} catch (error) {
 		res.json({ error: error.message });
 	}
@@ -36,12 +37,11 @@ router.post('/add', async (req, res) => {
 	}
 });
 // delete specific drink
-router.delete('/drinks/delete/:id', async (req, res) => {
+router.delete('/delete/:id', async (req, res) => {
 	try {
-		await User.findOneAndDelete({ _id: req.params.id });
-		res.json({
-			status: 200,
-			message: `Drink with ID : ${req.params.id} is removed`
+		await FavoriteDrink.findOneAndDelete({ _id: req.params.id });
+		res.status(200).json({
+			message: `Drink successfully removed`
 		});
 	} catch (error) {
 		res.json({ error: error.message });
